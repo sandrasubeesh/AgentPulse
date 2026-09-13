@@ -1,0 +1,20 @@
+AgentPulse Project Notes
+========================
+
+Project name:
+AgentPulse: A Digital Twin-Driven Runtime Security and Behavioral Trust Framework for AI Agents
+
+Current stage:
+Stage 1 — baseline tool-using AI agent.
+
+This file is sample data for the read_file tool.
+The agent should only read files from the local data/ directory.
+
+Planned later stages (not implemented yet):
+- Runtime event collection around agent decisions and tool use
+- Digital Twin of agent behavior
+- Behavioral trust scoring
+- Anomaly, injection, and data-leakage detection
+
+Safe reminder:
+Do not store secrets in this folder. Keep API keys in a local .env file that is not committed.
