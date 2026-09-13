@@ -12,6 +12,8 @@ from pathlib import Path
 from langchain_core.tools import BaseTool, tool
 
 from monitoring.event_collector import get_event_collector
+from security.tool_misuse_detector import ToolMisuseDetector
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
@@ -167,6 +169,33 @@ def _log_tool_call(tool_name: str, args: dict[str, object], func) -> str:
         input=args,
         status="initiated",
     )
+
+    tool_detector = ToolMisuseDetector()
+    t_res = tool_detector.detect(tool_name, args)
+    collector.record_event(
+        event_type="SECURITY_ANALYSIS",
+        tool=tool_name,
+        input=t_res.to_dict(),
+        status="detected" if t_res.detected else "clear",
+        detected=t_res.detected,
+        attack_type=t_res.attack_type,
+        severity=t_res.severity,
+        confidence=t_res.confidence,
+        reason=t_res.reason,
+    )
+    if t_res.detected:
+        collector.record_event(
+            event_type="SECURITY_DETECTION",
+            tool=tool_name,
+            input=t_res.to_dict(),
+            status="detected",
+            attack_type=t_res.attack_type,
+            severity=t_res.severity,
+            confidence=t_res.confidence,
+            reason=t_res.reason,
+        )
+
+
     try:
         res = func()
     except Exception as exc:

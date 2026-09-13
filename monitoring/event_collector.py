@@ -60,6 +60,7 @@ class EventCollector:
         tool: str | None = None,
         input: Any = None,
         status: str = "success",
+        **extra_fields: Any,
     ) -> dict[str, Any]:
         """Record a single runtime event in memory and write to JSONL log file."""
         self._ensure_log_dir()
@@ -73,6 +74,10 @@ class EventCollector:
             "input": redact_sensitive_data(input),
             "status": redact_sensitive_data(status),
         }
+        for k, v in extra_fields.items():
+            if k not in event:
+                event[k] = redact_sensitive_data(v)
+
 
         # Append to in-memory event store
         self.events.append(event)

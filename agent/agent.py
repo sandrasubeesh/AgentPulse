@@ -23,6 +23,8 @@ from langgraph.prebuilt import ToolNode
 
 from agent.tools import get_tools
 from monitoring.event_collector import EventCollector, get_event_collector
+from security.prompt_detector import PromptInjectionDetector
+
 
 
 load_dotenv()
@@ -141,6 +143,33 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
 
     task_str = str(task).strip()
     ec.record_event(event_type="USER_REQUEST", input=task_str, status="success")
+
+    prompt_detector = PromptInjectionDetector()
+    p_res = prompt_detector.detect(task_str)
+    ec.record_event(
+        event_type="SECURITY_ANALYSIS",
+        tool=None,
+        input=p_res.to_dict(),
+        status="detected" if p_res.detected else "clear",
+        detected=p_res.detected,
+        attack_type=p_res.attack_type,
+        severity=p_res.severity,
+        confidence=p_res.confidence,
+        reason=p_res.reason,
+    )
+    if p_res.detected:
+        ec.record_event(
+            event_type="SECURITY_DETECTION",
+            tool=None,
+            input=p_res.to_dict(),
+            status="detected",
+            attack_type=p_res.attack_type,
+            severity=p_res.severity,
+            confidence=p_res.confidence,
+            reason=p_res.reason,
+        )
+
+
 
     try:
         graph = agent if agent is not None else _cached_agent()
