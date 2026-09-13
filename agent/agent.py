@@ -22,6 +22,8 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
 
 from agent.tools import get_tools
+from monitoring.event_collector import EventCollector, get_event_collector
+
 
 load_dotenv()
 
@@ -127,10 +129,18 @@ def _cached_agent():
     return create_agent()
 
 
-def run_task(task: str, agent=None) -> str:
+def run_task(task: str, agent=None, collector: EventCollector | None = None) -> str:
     """Run one user task and return the agent's final text reply."""
+    ec = collector if collector is not None else get_event_collector()
+
     if task is None or not str(task).strip():
-        return "Error: Please enter a non-empty task."
+        err_msg = "Error: Please enter a non-empty task."
+        ec.record_event(event_type="USER_REQUEST", input=task, status="rejected")
+        ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        return err_msg
+
+    task_str = str(task).strip()
+    ec.record_event(event_type="USER_REQUEST", input=task_str, status="success")
 
     try:
         graph = agent if agent is not None else _cached_agent()
@@ -138,21 +148,33 @@ def run_task(task: str, agent=None) -> str:
             {
                 "messages": [
                     SystemMessage(content=SYSTEM_PROMPT),
-                    HumanMessage(content=str(task).strip()),
+                    HumanMessage(content=task_str),
                 ]
             }
         )
     except RuntimeError as exc:
-        return f"Error: {exc}"
+        err_msg = f"Error: {exc}"
+        ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        return err_msg
     except Exception as exc:  # noqa: BLE001 - keep the CLI from crashing on LLM failures
-        return _friendly_llm_error(exc)
+        err_msg = _friendly_llm_error(exc)
+        ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        return err_msg
 
     messages = result.get("messages", [])
     if not messages:
-        return "Error: The agent returned no messages."
+        err_msg = "Error: The agent returned no messages."
+        ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        return err_msg
 
     final = messages[-1]
     content = getattr(final, "content", None)
     if isinstance(content, str) and content.strip():
-        return content
-    return "Error: The agent did not produce a text response."
+        ans = content
+        ec.record_event(event_type="AGENT_RESPONSE", input=ans, status="success")
+        return ans
+
+    err_msg = "Error: The agent did not produce a text response."
+    ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+    return err_msg
+

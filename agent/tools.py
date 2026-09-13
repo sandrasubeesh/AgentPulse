@@ -11,8 +11,11 @@ from pathlib import Path
 
 from langchain_core.tools import BaseTool, tool
 
+from monitoring.event_collector import get_event_collector
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
+
 
 KNOWLEDGE_BASE: dict[str, str] = {
     "python": (
@@ -156,6 +159,43 @@ def simulate_send_email(recipient: str, message: str) -> str:
     )
 
 
+def _log_tool_call(tool_name: str, args: dict[str, object], func) -> str:
+    collector = get_event_collector()
+    collector.record_event(
+        event_type="TOOL_CALL",
+        tool=tool_name,
+        input=args,
+        status="initiated",
+    )
+    try:
+        res = func()
+    except Exception as exc:
+        err_msg = f"Error: {exc}"
+        collector.record_event(
+            event_type="TOOL_ERROR",
+            tool=tool_name,
+            input=err_msg,
+            status="error",
+        )
+        raise exc
+
+    if isinstance(res, str) and res.startswith("Error:"):
+        collector.record_event(
+            event_type="TOOL_ERROR",
+            tool=tool_name,
+            input=res,
+            status="error",
+        )
+    else:
+        collector.record_event(
+            event_type="TOOL_RESULT",
+            tool=tool_name,
+            input=res,
+            status="success",
+        )
+    return res
+
+
 @tool
 def read_file(filename: str) -> str:
     """Read a text file from the project's local data directory.
@@ -164,7 +204,7 @@ def read_file(filename: str) -> str:
     Pass only a filename such as notes.txt. Absolute paths and
     parent-directory paths such as ../ are rejected.
     """
-    return read_file_content(filename)
+    return _log_tool_call("read_file", {"filename": filename}, lambda: read_file_content(filename))
 
 
 @tool
@@ -173,7 +213,7 @@ def search_knowledge(query: str) -> str:
 
     Use this when the user asks a factual question about those topics.
     """
-    return search_knowledge_base(query)
+    return _log_tool_call("search_knowledge", {"query": query}, lambda: search_knowledge_base(query))
 
 
 @tool
@@ -183,9 +223,14 @@ def send_email(recipient: str, message: str) -> str:
     Use this when the user asks to email someone. Pass the recipient name
     or address and the message text. The result is always a simulation.
     """
-    return simulate_send_email(recipient, message)
+    return _log_tool_call(
+        "send_email",
+        {"recipient": recipient, "message": message},
+        lambda: simulate_send_email(recipient, message),
+    )
 
 
 def get_tools() -> list[BaseTool]:
     """Return the LangChain tools used by the baseline agent."""
     return [read_file, search_knowledge, send_email]
+
