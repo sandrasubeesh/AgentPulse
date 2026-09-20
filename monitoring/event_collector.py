@@ -26,6 +26,9 @@ REDACTION_PATTERNS = [
 
 def redact_sensitive_data(val: Any) -> Any:
     """Recursively redact sensitive tokens or credentials from logged values."""
+    if hasattr(val, "item") and callable(getattr(val, "item")):
+        val = val.item()
+
     if isinstance(val, str):
         redacted = val
         for pattern in REDACTION_PATTERNS:
@@ -36,6 +39,7 @@ def redact_sensitive_data(val: Any) -> Any:
     if isinstance(val, list):
         return [redact_sensitive_data(item) for item in val]
     return val
+
 
 
 class EventCollector:

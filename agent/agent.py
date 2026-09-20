@@ -22,8 +22,10 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode
 
 from agent.tools import get_tools
+from behavior import extract_features, get_anomaly_detector
 from monitoring.event_collector import EventCollector, get_event_collector
 from security.prompt_detector import PromptInjectionDetector
+
 
 
 
@@ -131,6 +133,25 @@ def _cached_agent():
     return create_agent()
 
 
+def _evaluate_behavioral_anomaly(collector: EventCollector) -> dict[str, Any]:
+    features = extract_features(collector.events)
+    detector = get_anomaly_detector()
+    result = detector.predict(features)
+    collector.record_event(
+        event_type="BEHAVIORAL_ANOMALY",
+        tool=None,
+        input=result,
+        status="detected" if result["detected"] else "clear",
+        detection_type="BEHAVIORAL_ANOMALY",
+        detected=result["detected"],
+        anomaly_score=result["anomaly_score"],
+        model=result["model"],
+        severity=result["severity"],
+        reason=result["reason"],
+    )
+    return result
+
+
 def run_task(task: str, agent=None, collector: EventCollector | None = None) -> str:
     """Run one user task and return the agent's final text reply."""
     ec = collector if collector is not None else get_event_collector()
@@ -139,6 +160,7 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
         err_msg = "Error: Please enter a non-empty task."
         ec.record_event(event_type="USER_REQUEST", input=task, status="rejected")
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        _evaluate_behavioral_anomaly(ec)
         return err_msg
 
     task_str = str(task).strip()
@@ -169,8 +191,6 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
             reason=p_res.reason,
         )
 
-
-
     try:
         graph = agent if agent is not None else _cached_agent()
         result = graph.invoke(
@@ -184,16 +204,19 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
     except RuntimeError as exc:
         err_msg = f"Error: {exc}"
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        _evaluate_behavioral_anomaly(ec)
         return err_msg
     except Exception as exc:  # noqa: BLE001 - keep the CLI from crashing on LLM failures
         err_msg = _friendly_llm_error(exc)
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        _evaluate_behavioral_anomaly(ec)
         return err_msg
 
     messages = result.get("messages", [])
     if not messages:
         err_msg = "Error: The agent returned no messages."
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+        _evaluate_behavioral_anomaly(ec)
         return err_msg
 
     final = messages[-1]
@@ -201,9 +224,12 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
     if isinstance(content, str) and content.strip():
         ans = content
         ec.record_event(event_type="AGENT_RESPONSE", input=ans, status="success")
+        _evaluate_behavioral_anomaly(ec)
         return ans
 
     err_msg = "Error: The agent did not produce a text response."
     ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
+    _evaluate_behavioral_anomaly(ec)
     return err_msg
+
 

@@ -2,31 +2,43 @@
 
 **AgentPulse: A Digital Twin-Driven Runtime Security and Behavioral Trust Framework for AI Agents**
 
-This repository is a research-oriented cybersecurity project. The long-term goal is to monitor AI agents at runtime, build a digital twin of their behavior, and score behavioral trust.
+This repository is a research-oriented cybersecurity framework. It monitors AI agents at runtime, collects runtime events, performs rule-based attack detection, and analyzes agent behavior using machine learning.
 
-That security framework is **not implemented yet**.
+---
 
-## What this first stage does
+## Architecture & Implementation Stages
 
-Stage 1 provides a clean, working **baseline tool-using AI agent**. Later stages will wrap this agent with a Runtime Event Collector. For now, the agent can:
+### Stage 1 — Baseline LangGraph AI Agent
+- **LLM**: Local Ollama (`llama3.2`). No cloud API keys required.
+- **Agent Architecture**: LangGraph ReAct loop.
+- **Controlled Tools**:
+  - `read_file(filename)`: Read text files from `data/` only (with path-traversal protection).
+  - `search_knowledge(query)`: Search local knowledge base.
+  - `send_email(recipient, message)`: Simulated email tool.
 
-1. Receive a natural-language task
-2. Decide whether a tool is needed
-3. Call one of three controlled tools
-4. Observe the tool result
-5. Reply in natural language
+### Stage 2 — Runtime Event Collector
+- **Event Logger**: Records runtime events to `logs/runtime_events.jsonl` with UTC ISO timestamps and unique UUIDs.
+- **Event Types**: `USER_REQUEST`, `AGENT_RESPONSE`, `TOOL_CALL`, `TOOL_RESULT`, `TOOL_ERROR`.
+- **Credential Redaction**: Automatic sanitization of API keys, bearer tokens, and secrets.
 
-The three tools are:
+### Stage 3 — Attack Detection Layer
+- **Rule-Based Security Detection**: Analyzes prompts and tool calls for known attack patterns.
+- **Detectors**:
+  - `PromptInjectionDetector`: Detects instruction overrides, system prompt extractions, and jailbreaks.
+  - `ToolMisuseDetector`: Detects path traversal, absolute path access, and sensitive file access.
+- **Event Types**: `SECURITY_ANALYSIS` (logged for all checks) and `SECURITY_DETECTION` (logged for positive detections).
 
-| Tool | Purpose |
-| --- | --- |
-| `read_file(filename)` | Read a text file from the local `data/` directory only |
-| `search_knowledge(query)` | Search a small in-memory knowledge base |
-| `send_email(recipient, message)` | **Simulate** an email. No real email is sent |
+### Stage 4 — Behavioral Anomaly Detection
+- **Machine Learning Detector**: Uses Scikit-learn `IsolationForest` to identify unusual or suspicious agent behavior patterns that do not match predefined signatures.
+- **Rule-Based Detection**: Detects known attacks using predefined patterns and security policies.
+- **Behavioral Anomaly Detection**: Uses Isolation Forest trained on a normal agent interaction baseline to detect unusual behavior (e.g. excessive tool calls, high tool error rates, unusual action sequences).
+- **Event Type**: `BEHAVIORAL_ANOMALY` recorded with `detection_type="BEHAVIORAL_ANOMALY"`, `detected`, `anomaly_score`, `model`, `severity`, and `reason`.
+
+---
 
 ## Installation
 
-Use Python 3.11 or newer.
+Requirements: Python 3.11+ and Ollama.
 
 ```bash
 cd AgentPulse
@@ -43,125 +55,74 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Ollama setup
+---
 
-This stage uses a **local Ollama** model. No OpenAI API key is required.
+## Ollama Setup
 
 1. Install Ollama from [https://ollama.com](https://ollama.com).
 2. Start the Ollama service:
+   ```bash
+   ollama serve
+   ```
+3. Pull the required model:
+   ```bash
+   ollama pull llama3.2
+   ```
 
-```bash
-ollama serve
-```
+---
 
-On macOS, opening the Ollama app is enough; it already serves models locally.
+## Running AgentPulse
 
-3. Pull the model used by AgentPulse:
-
-```bash
-ollama pull llama3.2
-```
-
-4. Confirm the model is listed:
-
-```bash
-ollama list
-```
-
-Optional `.env` values (copy from `.env.example` only if you want to override defaults):
-
-```
-OLLAMA_MODEL=llama3.2
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-```
-
-If Ollama is not running, or `llama3.2` has not been pulled, the CLI prints a clear error instead of crashing.
-
-## How to run AgentPulse
+Start the CLI:
 
 ```bash
 python main.py
 ```
 
-You should see:
-
-```
-========================================
-        AgentPulse Basic Agent
-========================================
-
-Enter your task:
->
-```
-
-Type a task and press Enter. Type `exit` to quit.
-
-Run the tool tests (no cloud API key required):
+Run tests:
 
 ```bash
-pytest tests/test_tools.py -v
+pytest -v
 ```
 
-## Example commands
+---
 
-```
-What is Python?
-Read notes.txt
-Send an email to Rahul saying the project meeting is tomorrow.
-Read ../../.env
-Tell me what an AI agent is.
-What is LangGraph?
-What is AgentPulse?
-```
-
-Expected behavior:
-
-- Factual questions about Python, LangGraph, AI agents, cybersecurity, or AgentPulse should use `search_knowledge`.
-- `Read notes.txt` should use `read_file`.
-- Email requests should use `send_email` and clearly report a **simulation**.
-- `Read ../../.env` must be rejected. The tool only allows filenames inside `data/`.
-
-## Project structure
+## Project Structure
 
 ```
 AgentPulse/
 ├── agent/
 │   ├── __init__.py
-│   ├── agent.py      # LangGraph ReAct agent
-│   └── tools.py      # Isolated tools (no monitoring yet)
+│   ├── agent.py               # LangGraph ReAct agent & pipeline integration
+│   └── tools.py               # Controlled tools with event & security hooks
+├── behavior/
+│   ├── __init__.py
+│   ├── feature_extractor.py   # Converts session events to numerical feature vectors
+│   └── anomaly_detector.py    # IsolationForest ML anomaly detector
+├── monitoring/
+│   ├── __init__.py
+│   └── event_collector.py     # Runtime Event Collector & JSONL logging
+├── security/
+│   ├── __init__.py
+│   ├── types.py               # Security detection result types
+│   ├── prompt_detector.py     # Prompt Injection Detector
+│   └── tool_misuse_detector.py# Tool Misuse Detector
 ├── data/
-│   └── notes.txt     # Sample file for read_file
+│   └── notes.txt              # Sample file for read_file
+├── logs/
+│   └── runtime_events.jsonl   # Local runtime log (gitignored)
 ├── tests/
-│   └── test_tools.py
+│   ├── test_tools.py
+│   ├── test_event_collector.py
+│   ├── test_prompt_detector.py
+│   ├── test_tool_misuse_detector.py
+│   ├── test_security_integration.py
+│   ├── test_feature_extractor.py
+│   ├── test_anomaly_detector.py
+│   └── test_behavior_integration.py
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
 ├── README.md
-└── main.py           # Command-line interface
+└── main.py                    # Command-line interface
 ```
-
-## Architecture notes
-
-`tools.py` does not import the agent graph. `agent.py` imports tools, but not the CLI. This keeps the baseline agent easy to wrap later around:
-
-- agent decisions
-- tool calls, inputs, and outputs
-- memory operations
-- API calls
-- security events
-
-Do not couple tools to a monitoring system in this stage.
-
-## Limitations of this first stage
-
-- No Digital Twin
-- No anomaly, prompt-injection, memory-poisoning, leakage, or privilege-escalation detection
-- No dynamic trust or risk scoring
-- No Neo4j, dashboard, authentication, database, Docker, or cloud deployment
-- No real email, SMTP, or other real external side effects
-- Knowledge search is a small local dictionary, not a retrieval system
-- File access is limited to filenames in `data/`
-- The CLI is single-turn: each task is a new conversation
-- The LLM is local Ollama (`llama3.2`); Ollama must be installed and running
-
-This stage is only the monitored subject for later AgentPulse work.
