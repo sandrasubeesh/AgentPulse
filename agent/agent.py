@@ -23,8 +23,11 @@ from langgraph.prebuilt import ToolNode
 
 from agent.tools import get_tools
 from behavior import extract_features, get_anomaly_detector
+from ml.runtime_predictor import get_runtime_predictor
 from monitoring.event_collector import EventCollector, get_event_collector
+from security.correlation_engine import get_correlation_engine
 from security.prompt_detector import PromptInjectionDetector
+from security.risk_engine import get_risk_engine
 
 
 
@@ -152,6 +155,148 @@ def _evaluate_behavioral_anomaly(collector: EventCollector) -> dict[str, Any]:
     return result
 
 
+def _evaluate_ml_behavior_prediction(collector: EventCollector) -> dict[str, Any]:
+    """Evaluate session behavior using trained Random Forest model and record ML_BEHAVIOR_PREDICTION event."""
+    try:
+        predictor = get_runtime_predictor()
+        pred = predictor.predict_session(collector.events)
+        collector.record_event(
+            event_type="ML_BEHAVIOR_PREDICTION",
+            tool=None,
+            input={
+                "prediction": pred.get("prediction", 0),
+                "predicted_label": pred.get("predicted_label", "NORMAL"),
+                "confidence": pred.get("confidence", 0.0),
+                "model": pred.get("model", "RandomForestClassifier"),
+                "feature_summary": pred.get("features_used", {}),
+            },
+            status=pred.get("status", "clear"),
+            prediction=pred.get("prediction", 0),
+            predicted_label=pred.get("predicted_label", "NORMAL"),
+            confidence=pred.get("confidence", 0.0),
+            model=pred.get("model", "RandomForestClassifier"),
+            feature_summary=pred.get("features_used", {}),
+        )
+        return pred
+    except Exception as exc:  # noqa: BLE001 - keep agent running safely on ML errors
+        err_msg = f"ML runtime prediction failed: {exc}"
+        collector.record_event(
+            event_type="ML_BEHAVIOR_PREDICTION",
+            tool=None,
+            input={"error": err_msg},
+            status="error",
+            prediction=0,
+            predicted_label="NORMAL",
+            confidence=0.0,
+            model="RandomForestClassifier",
+            feature_summary={},
+        )
+        return {
+            "prediction": 0,
+            "predicted_label": "NORMAL",
+            "confidence": 0.0,
+            "status": "error",
+            "error": err_msg,
+        }
+
+
+def _evaluate_security_correlation(collector: EventCollector) -> dict[str, Any]:
+    """Correlate security signals across rule-based detectors, Isolation Forest, and Random Forest ML."""
+    try:
+        engine = get_correlation_engine()
+        res = engine.correlate_session(collector.events)
+        collector.record_event(
+            event_type="SECURITY_CORRELATION",
+            tool=None,
+            input=res,
+            status="detected" if res.get("correlated") else "clear",
+            session_id=res.get("session_id"),
+            rule_based_detections=res.get("rule_based_detections", 0),
+            behavioral_anomaly_detected=res.get("behavioral_anomaly_detected", False),
+            ml_prediction=res.get("ml_prediction", "NORMAL"),
+            ml_confidence=res.get("ml_confidence", 0.0),
+            correlated=res.get("correlated", False),
+            severity=res.get("severity", "LOW"),
+            reason=res.get("reason", ""),
+            signals=res.get("signals", []),
+        )
+        return res
+    except Exception as exc:  # noqa: BLE001 - keep agent execution safe
+        err_msg = f"Security correlation evaluation failed: {exc}"
+        collector.record_event(
+            event_type="SECURITY_CORRELATION",
+            tool=None,
+            input={"error": err_msg},
+            status="error",
+            correlated=False,
+            severity="LOW",
+            reason=err_msg,
+            signals=[],
+        )
+        return {
+            "detection_type": "SECURITY_CORRELATION",
+            "correlated": False,
+            "severity": "LOW",
+            "reason": err_msg,
+            "signals": [],
+        }
+
+
+def _evaluate_risk_assessment(collector: EventCollector, correlation_result: dict[str, Any]) -> dict[str, Any]:
+    """Score the correlated security evidence and record a RISK_ASSESSMENT event."""
+    try:
+        engine = get_risk_engine()
+        res = engine.score(correlation_result)
+        collector.record_event(
+            event_type="RISK_ASSESSMENT",
+            tool=None,
+            input={
+                "risk_score": res.get("risk_score", 0),
+                "risk_level": res.get("risk_level", "LOW"),
+                "response_action": res.get("response_action", "ALLOW"),
+                "signals_used": res.get("signals_used", []),
+                "reason": res.get("reason", ""),
+            },
+            status=res.get("response_action", "ALLOW").lower(),
+            session_id=res.get("session_id"),
+            risk_score=res.get("risk_score", 0),
+            risk_level=res.get("risk_level", "LOW"),
+            response_action=res.get("response_action", "ALLOW"),
+            signals_used=res.get("signals_used", []),
+            reason=res.get("reason", ""),
+            score_breakdown=res.get("score_breakdown", {}),
+        )
+        return res
+    except Exception as exc:  # noqa: BLE001 - keep agent execution safe
+        err_msg = f"Risk assessment evaluation failed: {exc}"
+        collector.record_event(
+            event_type="RISK_ASSESSMENT",
+            tool=None,
+            input={"error": err_msg},
+            status="allow",
+            risk_score=0,
+            risk_level="LOW",
+            response_action="ALLOW",
+            signals_used=[],
+            reason=err_msg,
+        )
+        return {
+            "detection_type": "RISK_ASSESSMENT",
+            "risk_score": 0,
+            "risk_level": "LOW",
+            "response_action": "ALLOW",
+            "signals_used": [],
+            "reason": err_msg,
+        }
+
+
+def _post_session_evaluations(collector: EventCollector) -> None:
+    _evaluate_behavioral_anomaly(collector)
+    _evaluate_ml_behavior_prediction(collector)
+    corr = _evaluate_security_correlation(collector)
+    _evaluate_risk_assessment(collector, corr)
+
+
 def run_task(task: str, agent=None, collector: EventCollector | None = None) -> str:
     """Run one user task and return the agent's final text reply."""
     ec = collector if collector is not None else get_event_collector()
@@ -160,7 +305,7 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
         err_msg = "Error: Please enter a non-empty task."
         ec.record_event(event_type="USER_REQUEST", input=task, status="rejected")
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _evaluate_behavioral_anomaly(ec)
+        _post_session_evaluations(ec)
         return err_msg
 
     task_str = str(task).strip()
@@ -204,19 +349,19 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
     except RuntimeError as exc:
         err_msg = f"Error: {exc}"
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _evaluate_behavioral_anomaly(ec)
+        _post_session_evaluations(ec)
         return err_msg
     except Exception as exc:  # noqa: BLE001 - keep the CLI from crashing on LLM failures
         err_msg = _friendly_llm_error(exc)
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _evaluate_behavioral_anomaly(ec)
+        _post_session_evaluations(ec)
         return err_msg
 
     messages = result.get("messages", [])
     if not messages:
         err_msg = "Error: The agent returned no messages."
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _evaluate_behavioral_anomaly(ec)
+        _post_session_evaluations(ec)
         return err_msg
 
     final = messages[-1]
@@ -224,12 +369,12 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
     if isinstance(content, str) and content.strip():
         ans = content
         ec.record_event(event_type="AGENT_RESPONSE", input=ans, status="success")
-        _evaluate_behavioral_anomaly(ec)
+        _post_session_evaluations(ec)
         return ans
 
     err_msg = "Error: The agent did not produce a text response."
     ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-    _evaluate_behavioral_anomaly(ec)
+    _post_session_evaluations(ec)
     return err_msg
 
 

@@ -7,6 +7,7 @@ from typing import Any
 from sklearn.ensemble import IsolationForest
 
 from behavior.feature_extractor import FEATURE_NAMES, extract_features
+from behavior.runtime_baseline import load_benign_runtime_baseline
 
 
 def get_baseline_training_data() -> list[list[float]]:
@@ -82,14 +83,28 @@ class BehaviorAnomalyDetector:
             random_state=self.random_state,
         )
         self.is_trained = False
+        self.baseline_source = "none"
 
-    def train(self, normal_feature_vectors: list[list[float]]) -> None:
+    def train(self, normal_feature_vectors: list[list[float]], source: str = "synthetic") -> None:
         """Fit the IsolationForest model on benign session feature vectors."""
         if not normal_feature_vectors or len(normal_feature_vectors) < 2:
             raise ValueError("Insufficient training data. At least 2 feature vectors are required.")
 
         self.model.fit(normal_feature_vectors)
         self.is_trained = True
+        self.baseline_source = source
+
+    def train_with_auto_baseline(self, log_path: Any = None, min_sessions: int = 3) -> str:
+        """Train using real benign runtime log sessions if enough exist, else fall back to synthetic baseline."""
+        baseline_info = load_benign_runtime_baseline(log_path=log_path, min_sessions=min_sessions)
+        feature_vectors = baseline_info.get("feature_vectors", [])
+
+        if len(feature_vectors) >= min_sessions:
+            self.train(feature_vectors, source="runtime_logs")
+        else:
+            self.train(get_baseline_training_data(), source="synthetic")
+
+        return self.baseline_source
 
     def score(self, feature_vector: list[float]) -> float:
         """Return the raw IsolationForest decision score for a feature vector."""
@@ -110,6 +125,7 @@ class BehaviorAnomalyDetector:
                 "model": "IsolationForest",
                 "severity": "LOW",
                 "reason": "Detector is not trained; default low risk.",
+                "baseline_source": self.baseline_source,
             }
 
         score_val = self.score(feature_vector)
@@ -149,21 +165,20 @@ class BehaviorAnomalyDetector:
             "model": "IsolationForest",
             "severity": severity,
             "reason": reason_text,
+            "baseline_source": self.baseline_source,
         }
-
-
 
 
 # Singleton default trained detector
 _DEFAULT_DETECTOR: BehaviorAnomalyDetector | None = None
 
 
-def get_anomaly_detector() -> BehaviorAnomalyDetector:
+def get_anomaly_detector(log_path: Any = None) -> BehaviorAnomalyDetector:
     """Return a pre-trained singleton BehaviorAnomalyDetector instance."""
     global _DEFAULT_DETECTOR
     if _DEFAULT_DETECTOR is None:
         detector = BehaviorAnomalyDetector()
-        baseline_data = get_baseline_training_data()
-        detector.train(baseline_data)
+        detector.train_with_auto_baseline(log_path=log_path)
         _DEFAULT_DETECTOR = detector
     return _DEFAULT_DETECTOR
+
