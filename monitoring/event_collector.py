@@ -7,12 +7,14 @@ and sensitive credential redaction.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 import json
 import re
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LOG_FILE = PROJECT_ROOT / "logs" / "runtime_events.jsonl"
@@ -100,12 +102,27 @@ class EventCollector:
         self.events.clear()
 
 
-# Global default collector instance
+# Global default collector instance and context-scoped active collector
 _GLOBAL_COLLECTOR: EventCollector | None = None
+_ACTIVE_COLLECTOR: ContextVar[EventCollector | None] = ContextVar("_ACTIVE_COLLECTOR", default=None)
+
+
+@contextmanager
+def use_event_collector(collector: EventCollector) -> Iterator[EventCollector]:
+    """Context-scope an active EventCollector so downstream tool calls log to it."""
+    token = _ACTIVE_COLLECTOR.set(collector)
+    try:
+        yield collector
+    finally:
+        _ACTIVE_COLLECTOR.reset(token)
 
 
 def get_event_collector() -> EventCollector:
-    """Return the singleton global EventCollector instance."""
+    """Return the active context-scoped EventCollector or the singleton global instance."""
+    active = _ACTIVE_COLLECTOR.get()
+    if active is not None:
+        return active
+
     global _GLOBAL_COLLECTOR
     if _GLOBAL_COLLECTOR is None:
         _GLOBAL_COLLECTOR = EventCollector()

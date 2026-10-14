@@ -1,0 +1,10 @@
+{
+    "validation_accuracy": 0.9104477611940298,
+    "validation_macro_f1": 0.8987179487179487,
+    "test_accuracy": 0.917910447761194,
+    "test_macro_f1": 0.9172828675272591,
+    "training_samples": 352,
+    "validation_samples": 134,
+    "test_samples": 134,
+    "feature_count": 17
+}

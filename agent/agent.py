@@ -24,7 +24,7 @@ from langgraph.prebuilt import ToolNode
 from agent.tools import get_tools
 from behavior import extract_features, get_anomaly_detector
 from ml.runtime_predictor import get_runtime_predictor
-from monitoring.event_collector import EventCollector, get_event_collector
+from monitoring.event_collector import EventCollector, get_event_collector, use_event_collector
 from security.correlation_engine import get_correlation_engine
 from security.prompt_detector import PromptInjectionDetector
 from security.risk_engine import get_risk_engine
@@ -136,8 +136,12 @@ def _cached_agent():
     return create_agent()
 
 
-def _evaluate_behavioral_anomaly(collector: EventCollector) -> dict[str, Any]:
-    features = extract_features(collector.events)
+def _evaluate_behavioral_anomaly(
+    collector: EventCollector,
+    session_events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    events_to_score = session_events if session_events is not None else collector.events
+    features = extract_features(events_to_score)
     detector = get_anomaly_detector()
     result = detector.predict(features)
     collector.record_event(
@@ -155,11 +159,15 @@ def _evaluate_behavioral_anomaly(collector: EventCollector) -> dict[str, Any]:
     return result
 
 
-def _evaluate_ml_behavior_prediction(collector: EventCollector) -> dict[str, Any]:
+def _evaluate_ml_behavior_prediction(
+    collector: EventCollector,
+    session_events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Evaluate session behavior using trained Random Forest model and record ML_BEHAVIOR_PREDICTION event."""
     try:
+        events_to_score = session_events if session_events is not None else collector.events
         predictor = get_runtime_predictor()
-        pred = predictor.predict_session(collector.events)
+        pred = predictor.predict_session(events_to_score)
         collector.record_event(
             event_type="ML_BEHAVIOR_PREDICTION",
             tool=None,
@@ -200,11 +208,15 @@ def _evaluate_ml_behavior_prediction(collector: EventCollector) -> dict[str, Any
         }
 
 
-def _evaluate_security_correlation(collector: EventCollector) -> dict[str, Any]:
+def _evaluate_security_correlation(
+    collector: EventCollector,
+    session_events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Correlate security signals across rule-based detectors, Isolation Forest, and Random Forest ML."""
     try:
+        events_to_correlate = session_events if session_events is not None else collector.events
         engine = get_correlation_engine()
-        res = engine.correlate_session(collector.events)
+        res = engine.correlate_session(events_to_correlate)
         collector.record_event(
             event_type="SECURITY_CORRELATION",
             tool=None,
@@ -290,22 +302,31 @@ def _evaluate_risk_assessment(collector: EventCollector, correlation_result: dic
         }
 
 
-def _post_session_evaluations(collector: EventCollector) -> None:
-    _evaluate_behavioral_anomaly(collector)
-    _evaluate_ml_behavior_prediction(collector)
-    corr = _evaluate_security_correlation(collector)
+def _post_session_evaluations(collector: EventCollector, session_start_idx: int = 0) -> None:
+    """Run post-session anomaly, ML, correlation, and risk evaluations scoped to the current session.
+
+    Both Isolation Forest and Random Forest evaluate the completed operational session
+    (USER_REQUEST through AGENT_RESPONSE) independently before post-session detector
+    events are appended, preventing self-reinforcing detector feedback loops.
+    """
+    operational_session_events = list(collector.events[session_start_idx:])
+    _evaluate_behavioral_anomaly(collector, session_events=operational_session_events)
+    _evaluate_ml_behavior_prediction(collector, session_events=operational_session_events)
+    full_current_session_events = list(collector.events[session_start_idx:])
+    corr = _evaluate_security_correlation(collector, session_events=full_current_session_events)
     _evaluate_risk_assessment(collector, corr)
 
 
 def run_task(task: str, agent=None, collector: EventCollector | None = None) -> str:
     """Run one user task and return the agent's final text reply."""
     ec = collector if collector is not None else get_event_collector()
+    session_start_idx = len(ec.events)
 
     if task is None or not str(task).strip():
         err_msg = "Error: Please enter a non-empty task."
         ec.record_event(event_type="USER_REQUEST", input=task, status="rejected")
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _post_session_evaluations(ec)
+        _post_session_evaluations(ec, session_start_idx=session_start_idx)
         return err_msg
 
     task_str = str(task).strip()
@@ -323,6 +344,7 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
         severity=p_res.severity,
         confidence=p_res.confidence,
         reason=p_res.reason,
+        rule_name=getattr(p_res, "rule_name", None),
     )
     if p_res.detected:
         ec.record_event(
@@ -334,34 +356,36 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
             severity=p_res.severity,
             confidence=p_res.confidence,
             reason=p_res.reason,
+            rule_name=getattr(p_res, "rule_name", None),
         )
 
     try:
         graph = agent if agent is not None else _cached_agent()
-        result = graph.invoke(
-            {
-                "messages": [
-                    SystemMessage(content=SYSTEM_PROMPT),
-                    HumanMessage(content=task_str),
-                ]
-            }
-        )
+        with use_event_collector(ec):
+            result = graph.invoke(
+                {
+                    "messages": [
+                        SystemMessage(content=SYSTEM_PROMPT),
+                        HumanMessage(content=task_str),
+                    ]
+                }
+            )
     except RuntimeError as exc:
         err_msg = f"Error: {exc}"
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _post_session_evaluations(ec)
+        _post_session_evaluations(ec, session_start_idx=session_start_idx)
         return err_msg
     except Exception as exc:  # noqa: BLE001 - keep the CLI from crashing on LLM failures
         err_msg = _friendly_llm_error(exc)
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _post_session_evaluations(ec)
+        _post_session_evaluations(ec, session_start_idx=session_start_idx)
         return err_msg
 
     messages = result.get("messages", [])
     if not messages:
         err_msg = "Error: The agent returned no messages."
         ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-        _post_session_evaluations(ec)
+        _post_session_evaluations(ec, session_start_idx=session_start_idx)
         return err_msg
 
     final = messages[-1]
@@ -369,12 +393,12 @@ def run_task(task: str, agent=None, collector: EventCollector | None = None) -> 
     if isinstance(content, str) and content.strip():
         ans = content
         ec.record_event(event_type="AGENT_RESPONSE", input=ans, status="success")
-        _post_session_evaluations(ec)
+        _post_session_evaluations(ec, session_start_idx=session_start_idx)
         return ans
 
     err_msg = "Error: The agent did not produce a text response."
     ec.record_event(event_type="AGENT_RESPONSE", input=err_msg, status="error")
-    _post_session_evaluations(ec)
+    _post_session_evaluations(ec, session_start_idx=session_start_idx)
     return err_msg
 
 

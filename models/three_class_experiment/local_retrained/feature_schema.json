@@ -1,0 +1,32 @@
+{
+  "target": "behavior_label",
+  "features": [
+    "sequence_length",
+    "tool_call_count",
+    "unique_tool_count",
+    "repeated_tool_ratio",
+    "tool_switch_count",
+    "max_consecutive_same_tool",
+    "failed_tool_ratio",
+    "sensitive_resource_count",
+    "external_access_count",
+    "transition_anomaly",
+    "sequence_deviation",
+    "action_entropy",
+    "memory_retrieval_count",
+    "refusal_event_count",
+    "goal_change_indicator",
+    "task_completed_observed",
+    "n_events"
+  ],
+  "classes": [
+    "MALICIOUS",
+    "NORMAL",
+    "SUSPICIOUS"
+  ],
+  "dataset_type": "simulated benchmark-derived data",
+  "model": "RandomForestClassifier",
+  "random_state": 20261007,
+  "sklearn_version": "1.9.1",
+  "artifact_note": "Locally retrained using the original saved dataset splits"
+}

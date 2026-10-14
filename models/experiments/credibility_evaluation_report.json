@@ -1,0 +1,4162 @@
+{
+  "pipeline_type": "isolated_experimental_credibility_evaluation",
+  "synthetic_data_notice": "All generated datasets and evaluations in this report use synthetic agent session simulations. Results measure evaluation methodology sensitivity (label leakage, template cloning, and row-level vs scenario-grouped splitting) and must NOT be interpreted as real-world attack detection effectiveness.",
+  "existing_200_csv_readonly_audit": {
+    "dataset_path": "/Users/smithkappani/Desktop/AgentPulse-Recovered/data/behavioral_dataset.csv",
+    "total_rows": 200,
+    "class_distribution": {
+      "NORMAL": 100,
+      "SUSPICIOUS": 100
+    },
+    "has_scenario_group_column": false,
+    "security_detection_rule_accuracy": 1.0,
+    "unique_discrete_behavioral_patterns": 21,
+    "single_feature_5fold_stump": {
+      "total_events": {
+        "mean_cv_accuracy": 0.61,
+        "std_cv_accuracy": 0.0339,
+        "mean_cv_macro_f1": 0.5536
+      },
+      "tool_call_count": {
+        "mean_cv_accuracy": 0.59,
+        "std_cv_accuracy": 0.0339,
+        "mean_cv_macro_f1": 0.5047
+      },
+      "tool_result_count": {
+        "mean_cv_accuracy": 0.865,
+        "std_cv_accuracy": 0.0255,
+        "mean_cv_macro_f1": 0.863
+      },
+      "tool_error_count": {
+        "mean_cv_accuracy": 0.765,
+        "std_cv_accuracy": 0.0644,
+        "mean_cv_macro_f1": 0.7601
+      },
+      "unique_tool_count": {
+        "mean_cv_accuracy": 0.59,
+        "std_cv_accuracy": 0.0374,
+        "mean_cv_macro_f1": 0.504
+      },
+      "file_read_count": {
+        "mean_cv_accuracy": 0.59,
+        "std_cv_accuracy": 0.0339,
+        "mean_cv_macro_f1": 0.5047
+      },
+      "search_call_count": {
+        "mean_cv_accuracy": 0.675,
+        "std_cv_accuracy": 0.0474,
+        "mean_cv_macro_f1": 0.639
+      },
+      "email_call_count": {
+        "mean_cv_accuracy": 0.63,
+        "std_cv_accuracy": 0.0579,
+        "mean_cv_macro_f1": 0.565
+      },
+      "security_detection_count": {
+        "mean_cv_accuracy": 1.0,
+        "std_cv_accuracy": 0.0,
+        "mean_cv_macro_f1": 1.0
+      },
+      "prompt_event_count": {
+        "mean_cv_accuracy": 0.5,
+        "std_cv_accuracy": 0.0,
+        "mean_cv_macro_f1": 0.3333
+      },
+      "session_duration_seconds": {
+        "mean_cv_accuracy": 0.76,
+        "std_cv_accuracy": 0.0464,
+        "mean_cv_macro_f1": 0.7585
+      }
+    }
+  },
+  "benchmarks": {
+    "synthetic_exact_152": {
+      "csv_path": "/Users/smithkappani/Desktop/AgentPulse-Recovered/data/experiments/exact_152_tagged_dataset.csv",
+      "jsonl_path": "/Users/smithkappani/Desktop/AgentPulse-Recovered/data/experiments/exact_152_tagged_sessions.jsonl",
+      "evaluation": {
+        "benchmark_name": "synthetic_exact_152",
+        "is_synthetic_data": true,
+        "disclaimer": "All sessions in this benchmark are synthetically generated for controlled evaluation methodology analysis and do NOT represent real-world production security effectiveness.",
+        "total_samples": 152,
+        "class_distribution": {
+          "NORMAL": 74,
+          "SUSPICIOUS": 78
+        },
+        "scenario_family_distribution": {
+          "benign_multitool": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_qa": {
+            "NORMAL": 15,
+            "SUSPICIOUS": 0
+          },
+          "benign_single_email": {
+            "NORMAL": 10,
+            "SUSPICIOUS": 0
+          },
+          "benign_single_read": {
+            "NORMAL": 10,
+            "SUSPICIOUS": 0
+          },
+          "benign_single_search": {
+            "NORMAL": 10,
+            "SUSPICIOUS": 0
+          },
+          "benign_tool_error": {
+            "NORMAL": 9,
+            "SUSPICIOUS": 0
+          },
+          "suspicious_behavioral_anomaly": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 18
+          },
+          "suspicious_prompt_injection": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 30
+          },
+          "suspicious_tool_misuse": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 30
+          }
+        },
+        "indirect_total_events_leakage_analysis": {
+          "mean_security_event_overhead_normal": 0.0,
+          "mean_security_event_overhead_suspicious": 1.7692,
+          "explanation": "In raw 'total_events', SECURITY_ANALYSIS, SECURITY_DETECTION, and BEHAVIORAL_ANOMALY events are counted in the session length. 'non_security_total_events' strips these detector-generated events so session length reflects only operational user/tool/agent events."
+        },
+        "feature_set_evaluations": {
+          "11_with_detector_leakage": {
+            "features": [
+              "total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "security_detection_count",
+              "prompt_event_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 11,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1_score": 1.0,
+                "macro_f1": 1.0,
+                "confusion_matrix": [
+                  [
+                    15,
+                    0
+                  ],
+                  [
+                    0,
+                    16
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 15,
+                  "SUSPICIOUS": 16
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 15
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 16
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_multitool",
+                "benign_qa",
+                "benign_single_email",
+                "benign_single_read",
+                "benign_single_search",
+                "benign_tool_error",
+                "suspicious_behavioral_anomaly",
+                "suspicious_prompt_injection",
+                "suspicious_tool_misuse"
+              ],
+              "shared_family_count": 9,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "mean_accuracy": 1.0,
+                "std_accuracy": 0.0,
+                "mean_precision": 1.0,
+                "mean_recall": 1.0,
+                "mean_f1": 1.0,
+                "mean_macro_f1": 1.0,
+                "pooled_oof_metrics": {
+                  "accuracy": 1.0,
+                  "precision": 1.0,
+                  "recall": 1.0,
+                  "f1_score": 1.0,
+                  "macro_f1": 1.0,
+                  "confusion_matrix": [
+                    [
+                      74,
+                      0
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 78
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_multitool",
+                  "benign_single_email",
+                  "benign_single_read",
+                  "benign_single_search",
+                  "suspicious_behavioral_anomaly",
+                  "suspicious_tool_misuse"
+                ],
+                "test_groups": [
+                  "benign_qa",
+                  "benign_tool_error",
+                  "suspicious_prompt_injection"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.8333,
+                "precision": 0.7692,
+                "recall": 1.0,
+                "f1_score": 0.8696,
+                "macro_f1": 0.8194,
+                "confusion_matrix": [
+                  [
+                    15,
+                    9
+                  ],
+                  [
+                    0,
+                    30
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 30
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 0.625,
+                    "f1_score": 0.7692,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.7692,
+                    "recall": 1.0,
+                    "f1_score": 0.8696,
+                    "support": 30
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": false,
+                "actual_splits_used": 3,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 3,
+                "coverage_note": "Requested 5-fold StratifiedGroupKFold cannot place SUSPICIOUS sessions in all 5 validation folds because dataset has 6 NORMAL families and 3 SUSPICIOUS families. Automatically used 3-fold StratifiedGroupKFold (max folds with full two-class coverage).",
+                "fold_accuracies": [
+                  0.4545,
+                  0.46,
+                  0.617
+                ],
+                "mean_accuracy": 0.5105,
+                "std_accuracy": 0.0753,
+                "mean_precision": 0.3333,
+                "mean_recall": 0.0333,
+                "mean_f1": 0.0606,
+                "mean_macro_f1": 0.3612,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.5066,
+                  "precision": 1.0,
+                  "recall": 0.0385,
+                  "f1_score": 0.0741,
+                  "macro_f1": 0.3689,
+                  "confusion_matrix": [
+                    [
+                      74,
+                      0
+                    ],
+                    [
+                      75,
+                      3
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.4966,
+                      "recall": 1.0,
+                      "f1_score": 0.6637,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 1.0,
+                      "recall": 0.0385,
+                      "f1_score": 0.0741,
+                      "support": 78
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_single_email",
+                      "benign_single_search",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_qa",
+                      "benign_single_read",
+                      "suspicious_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4545,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.3125,
+                      "confusion_matrix": [
+                        [
+                          25,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 25,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4545,
+                          "recall": 1.0,
+                          "f1_score": 0.625,
+                          "support": 25
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_qa",
+                      "benign_single_read",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_prompt_injection"
+                    ],
+                    "val_groups": [
+                      "benign_single_email",
+                      "benign_single_search",
+                      "suspicious_tool_misuse"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.46,
+                      "precision": 1.0,
+                      "recall": 0.1,
+                      "f1_score": 0.1818,
+                      "macro_f1": 0.3894,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          27,
+                          3
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4255,
+                          "recall": 1.0,
+                          "f1_score": 0.597,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 0.1,
+                          "f1_score": 0.1818,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_qa",
+                      "benign_single_email",
+                      "benign_single_read",
+                      "benign_single_search",
+                      "suspicious_prompt_injection",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_multitool",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.617,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.3816,
+                      "confusion_matrix": [
+                        [
+                          29,
+                          0
+                        ],
+                        [
+                          18,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 29,
+                        "SUSPICIOUS": 18
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.617,
+                          "recall": 1.0,
+                          "f1_score": 0.7632,
+                          "support": 29
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 18
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3127
+                },
+                {
+                  "feature": "security_detection_count",
+                  "importance": 0.2797
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.269
+                },
+                {
+                  "feature": "total_events",
+                  "importance": 0.0332
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0256
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.0244
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0236
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0184
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.0103
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0031
+                },
+                {
+                  "feature": "prompt_event_count",
+                  "importance": 0.0
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.4895,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.6388
+            }
+          },
+          "9_raw_total_events_indirect_leakage": {
+            "features": [
+              "total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 9,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1_score": 1.0,
+                "macro_f1": 1.0,
+                "confusion_matrix": [
+                  [
+                    15,
+                    0
+                  ],
+                  [
+                    0,
+                    16
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 15,
+                  "SUSPICIOUS": 16
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 15
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 16
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_multitool",
+                "benign_qa",
+                "benign_single_email",
+                "benign_single_read",
+                "benign_single_search",
+                "benign_tool_error",
+                "suspicious_behavioral_anomaly",
+                "suspicious_prompt_injection",
+                "suspicious_tool_misuse"
+              ],
+              "shared_family_count": 9,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "mean_accuracy": 1.0,
+                "std_accuracy": 0.0,
+                "mean_precision": 1.0,
+                "mean_recall": 1.0,
+                "mean_f1": 1.0,
+                "mean_macro_f1": 1.0,
+                "pooled_oof_metrics": {
+                  "accuracy": 1.0,
+                  "precision": 1.0,
+                  "recall": 1.0,
+                  "f1_score": 1.0,
+                  "macro_f1": 1.0,
+                  "confusion_matrix": [
+                    [
+                      74,
+                      0
+                    ],
+                    [
+                      0,
+                      78
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 78
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_multitool",
+                  "benign_single_email",
+                  "benign_single_read",
+                  "benign_single_search",
+                  "suspicious_behavioral_anomaly",
+                  "suspicious_tool_misuse"
+                ],
+                "test_groups": [
+                  "benign_qa",
+                  "benign_tool_error",
+                  "suspicious_prompt_injection"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.2778,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1_score": 0.0,
+                "macro_f1": 0.2174,
+                "confusion_matrix": [
+                  [
+                    15,
+                    9
+                  ],
+                  [
+                    30,
+                    0
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 30
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.3333,
+                    "recall": 0.625,
+                    "f1_score": 0.4348,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "f1_score": 0.0,
+                    "support": 30
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": false,
+                "actual_splits_used": 3,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 3,
+                "coverage_note": "Requested 5-fold StratifiedGroupKFold cannot place SUSPICIOUS sessions in all 5 validation folds because dataset has 6 NORMAL families and 3 SUSPICIOUS families. Automatically used 3-fold StratifiedGroupKFold (max folds with full two-class coverage).",
+                "fold_accuracies": [
+                  0.4545,
+                  0.4,
+                  0.8085
+                ],
+                "mean_accuracy": 0.5543,
+                "std_accuracy": 0.1811,
+                "mean_precision": 0.2222,
+                "mean_recall": 0.3333,
+                "mean_f1": 0.2667,
+                "mean_macro_f1": 0.4688,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.5461,
+                  "precision": 0.6667,
+                  "recall": 0.2308,
+                  "f1_score": 0.3429,
+                  "macro_f1": 0.4981,
+                  "confusion_matrix": [
+                    [
+                      65,
+                      9
+                    ],
+                    [
+                      60,
+                      18
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.52,
+                      "recall": 0.8784,
+                      "f1_score": 0.6533,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.6667,
+                      "recall": 0.2308,
+                      "f1_score": 0.3429,
+                      "support": 78
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_single_email",
+                      "benign_single_search",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_qa",
+                      "benign_single_read",
+                      "suspicious_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4545,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.3125,
+                      "confusion_matrix": [
+                        [
+                          25,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 25,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4545,
+                          "recall": 1.0,
+                          "f1_score": 0.625,
+                          "support": 25
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_qa",
+                      "benign_single_read",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_prompt_injection"
+                    ],
+                    "val_groups": [
+                      "benign_single_email",
+                      "benign_single_search",
+                      "suspicious_tool_misuse"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2857,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4,
+                          "recall": 1.0,
+                          "f1_score": 0.5714,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_qa",
+                      "benign_single_email",
+                      "benign_single_read",
+                      "benign_single_search",
+                      "suspicious_prompt_injection",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_multitool",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.8085,
+                      "precision": 0.6667,
+                      "recall": 1.0,
+                      "f1_score": 0.8,
+                      "macro_f1": 0.8082,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          9
+                        ],
+                        [
+                          0,
+                          18
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 29,
+                        "SUSPICIOUS": 18
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 0.6897,
+                          "f1_score": 0.8163,
+                          "support": 29
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.6667,
+                          "recall": 1.0,
+                          "f1_score": 0.8,
+                          "support": 18
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.4544
+                },
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3629
+                },
+                {
+                  "feature": "total_events",
+                  "importance": 0.0756
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0405
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.037
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.0147
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0079
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0059
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.0012
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.4457,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.5312
+            }
+          },
+          "9_deleaked_behavioral": {
+            "features": [
+              "non_security_total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 9,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 0.9355,
+                "precision": 0.9375,
+                "recall": 0.9375,
+                "f1_score": 0.9375,
+                "macro_f1": 0.9354,
+                "confusion_matrix": [
+                  [
+                    14,
+                    1
+                  ],
+                  [
+                    1,
+                    15
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 15,
+                  "SUSPICIOUS": 16
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.9333,
+                    "recall": 0.9333,
+                    "f1_score": 0.9333,
+                    "support": 15
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.9375,
+                    "recall": 0.9375,
+                    "f1_score": 0.9375,
+                    "support": 16
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_multitool",
+                "benign_qa",
+                "benign_single_email",
+                "benign_single_read",
+                "benign_single_search",
+                "benign_tool_error",
+                "suspicious_behavioral_anomaly",
+                "suspicious_prompt_injection",
+                "suspicious_tool_misuse"
+              ],
+              "shared_family_count": 9,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  0.8387,
+                  0.9032,
+                  0.8333,
+                  0.9333,
+                  0.8667
+                ],
+                "mean_accuracy": 0.875,
+                "std_accuracy": 0.0383,
+                "mean_precision": 0.8753,
+                "mean_recall": 0.8958,
+                "mean_f1": 0.881,
+                "mean_macro_f1": 0.8735,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.875,
+                  "precision": 0.8642,
+                  "recall": 0.8974,
+                  "f1_score": 0.8805,
+                  "macro_f1": 0.8747,
+                  "confusion_matrix": [
+                    [
+                      63,
+                      11
+                    ],
+                    [
+                      8,
+                      70
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.8873,
+                      "recall": 0.8514,
+                      "f1_score": 0.869,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.8642,
+                      "recall": 0.8974,
+                      "f1_score": 0.8805,
+                      "support": 78
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_multitool",
+                  "benign_single_email",
+                  "benign_single_read",
+                  "benign_single_search",
+                  "suspicious_behavioral_anomaly",
+                  "suspicious_tool_misuse"
+                ],
+                "test_groups": [
+                  "benign_qa",
+                  "benign_tool_error",
+                  "suspicious_prompt_injection"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.5741,
+                "precision": 0.566,
+                "recall": 1.0,
+                "f1_score": 0.7229,
+                "macro_f1": 0.4014,
+                "confusion_matrix": [
+                  [
+                    1,
+                    23
+                  ],
+                  [
+                    0,
+                    30
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 30
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 0.0417,
+                    "f1_score": 0.08,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.566,
+                    "recall": 1.0,
+                    "f1_score": 0.7229,
+                    "support": 30
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": false,
+                "actual_splits_used": 3,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 3,
+                "coverage_note": "Requested 5-fold StratifiedGroupKFold cannot place SUSPICIOUS sessions in all 5 validation folds because dataset has 6 NORMAL families and 3 SUSPICIOUS families. Automatically used 3-fold StratifiedGroupKFold (max folds with full two-class coverage).",
+                "fold_accuracies": [
+                  0.4545,
+                  0.4,
+                  0.8085
+                ],
+                "mean_accuracy": 0.5543,
+                "std_accuracy": 0.1811,
+                "mean_precision": 0.2222,
+                "mean_recall": 0.3333,
+                "mean_f1": 0.2667,
+                "mean_macro_f1": 0.4688,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.5461,
+                  "precision": 0.6667,
+                  "recall": 0.2308,
+                  "f1_score": 0.3429,
+                  "macro_f1": 0.4981,
+                  "confusion_matrix": [
+                    [
+                      65,
+                      9
+                    ],
+                    [
+                      60,
+                      18
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.52,
+                      "recall": 0.8784,
+                      "f1_score": 0.6533,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.6667,
+                      "recall": 0.2308,
+                      "f1_score": 0.3429,
+                      "support": 78
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_single_email",
+                      "benign_single_search",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_qa",
+                      "benign_single_read",
+                      "suspicious_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4545,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.3125,
+                      "confusion_matrix": [
+                        [
+                          25,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 25,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4545,
+                          "recall": 1.0,
+                          "f1_score": 0.625,
+                          "support": 25
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_qa",
+                      "benign_single_read",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_prompt_injection"
+                    ],
+                    "val_groups": [
+                      "benign_single_email",
+                      "benign_single_search",
+                      "suspicious_tool_misuse"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2857,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4,
+                          "recall": 1.0,
+                          "f1_score": 0.5714,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_qa",
+                      "benign_single_email",
+                      "benign_single_read",
+                      "benign_single_search",
+                      "suspicious_prompt_injection",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_multitool",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.8085,
+                      "precision": 0.6667,
+                      "recall": 1.0,
+                      "f1_score": 0.8,
+                      "macro_f1": 0.8082,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          9
+                        ],
+                        [
+                          0,
+                          18
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 29,
+                        "SUSPICIOUS": 18
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 0.6897,
+                          "f1_score": 0.8163,
+                          "support": 29
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.6667,
+                          "recall": 1.0,
+                          "f1_score": 0.8,
+                          "support": 18
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.4622
+                },
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3774
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0442
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0335
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0331
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.0205
+                },
+                {
+                  "feature": "non_security_total_events",
+                  "importance": 0.0153
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.0089
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0049
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.3207,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.4047
+            }
+          },
+          "8_pure_tool_timing": {
+            "features": [
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 8,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 0.9355,
+                "precision": 0.9375,
+                "recall": 0.9375,
+                "f1_score": 0.9375,
+                "macro_f1": 0.9354,
+                "confusion_matrix": [
+                  [
+                    14,
+                    1
+                  ],
+                  [
+                    1,
+                    15
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 15,
+                  "SUSPICIOUS": 16
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.9333,
+                    "recall": 0.9333,
+                    "f1_score": 0.9333,
+                    "support": 15
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.9375,
+                    "recall": 0.9375,
+                    "f1_score": 0.9375,
+                    "support": 16
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_multitool",
+                "benign_qa",
+                "benign_single_email",
+                "benign_single_read",
+                "benign_single_search",
+                "benign_tool_error",
+                "suspicious_behavioral_anomaly",
+                "suspicious_prompt_injection",
+                "suspicious_tool_misuse"
+              ],
+              "shared_family_count": 9,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  0.8387,
+                  0.9032,
+                  0.8333,
+                  0.9333,
+                  0.8667
+                ],
+                "mean_accuracy": 0.875,
+                "std_accuracy": 0.0383,
+                "mean_precision": 0.8753,
+                "mean_recall": 0.8958,
+                "mean_f1": 0.881,
+                "mean_macro_f1": 0.8735,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.875,
+                  "precision": 0.8642,
+                  "recall": 0.8974,
+                  "f1_score": 0.8805,
+                  "macro_f1": 0.8747,
+                  "confusion_matrix": [
+                    [
+                      63,
+                      11
+                    ],
+                    [
+                      8,
+                      70
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.8873,
+                      "recall": 0.8514,
+                      "f1_score": 0.869,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.8642,
+                      "recall": 0.8974,
+                      "f1_score": 0.8805,
+                      "support": 78
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_multitool",
+                  "benign_single_email",
+                  "benign_single_read",
+                  "benign_single_search",
+                  "suspicious_behavioral_anomaly",
+                  "suspicious_tool_misuse"
+                ],
+                "test_groups": [
+                  "benign_qa",
+                  "benign_tool_error",
+                  "suspicious_prompt_injection"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.2778,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1_score": 0.0,
+                "macro_f1": 0.2174,
+                "confusion_matrix": [
+                  [
+                    15,
+                    9
+                  ],
+                  [
+                    30,
+                    0
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 30
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.3333,
+                    "recall": 0.625,
+                    "f1_score": 0.4348,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "f1_score": 0.0,
+                    "support": 30
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": false,
+                "actual_splits_used": 3,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 3,
+                "coverage_note": "Requested 5-fold StratifiedGroupKFold cannot place SUSPICIOUS sessions in all 5 validation folds because dataset has 6 NORMAL families and 3 SUSPICIOUS families. Automatically used 3-fold StratifiedGroupKFold (max folds with full two-class coverage).",
+                "fold_accuracies": [
+                  0.4545,
+                  0.4,
+                  0.8085
+                ],
+                "mean_accuracy": 0.5543,
+                "std_accuracy": 0.1811,
+                "mean_precision": 0.2222,
+                "mean_recall": 0.3333,
+                "mean_f1": 0.2667,
+                "mean_macro_f1": 0.4688,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.5461,
+                  "precision": 0.6667,
+                  "recall": 0.2308,
+                  "f1_score": 0.3429,
+                  "macro_f1": 0.4981,
+                  "confusion_matrix": [
+                    [
+                      65,
+                      9
+                    ],
+                    [
+                      60,
+                      18
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 74,
+                    "SUSPICIOUS": 78
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.52,
+                      "recall": 0.8784,
+                      "f1_score": 0.6533,
+                      "support": 74
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.6667,
+                      "recall": 0.2308,
+                      "f1_score": 0.3429,
+                      "support": 78
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_single_email",
+                      "benign_single_search",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_qa",
+                      "benign_single_read",
+                      "suspicious_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4545,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.3125,
+                      "confusion_matrix": [
+                        [
+                          25,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 25,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4545,
+                          "recall": 1.0,
+                          "f1_score": 0.625,
+                          "support": 25
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_multitool",
+                      "benign_qa",
+                      "benign_single_read",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly",
+                      "suspicious_prompt_injection"
+                    ],
+                    "val_groups": [
+                      "benign_single_email",
+                      "benign_single_search",
+                      "suspicious_tool_misuse"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.4,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2857,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          30,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 30
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4,
+                          "recall": 1.0,
+                          "f1_score": 0.5714,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 30
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_qa",
+                      "benign_single_email",
+                      "benign_single_read",
+                      "benign_single_search",
+                      "suspicious_prompt_injection",
+                      "suspicious_tool_misuse"
+                    ],
+                    "val_groups": [
+                      "benign_multitool",
+                      "benign_tool_error",
+                      "suspicious_behavioral_anomaly"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.8085,
+                      "precision": 0.6667,
+                      "recall": 1.0,
+                      "f1_score": 0.8,
+                      "macro_f1": 0.8082,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          9
+                        ],
+                        [
+                          0,
+                          18
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 29,
+                        "SUSPICIOUS": 18
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 0.6897,
+                          "f1_score": 0.8163,
+                          "support": 29
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.6667,
+                          "recall": 1.0,
+                          "f1_score": 0.8,
+                          "support": 18
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3967
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.3803
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0654
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0495
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.0453
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0313
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0167
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.0148
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.3207,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.4047
+            }
+          }
+        }
+      }
+    },
+    "synthetic_enriched_240": {
+      "csv_path": "/Users/smithkappani/Desktop/AgentPulse-Recovered/data/experiments/enriched_synthetic_dataset.csv",
+      "jsonl_path": "/Users/smithkappani/Desktop/AgentPulse-Recovered/data/experiments/enriched_synthetic_sessions.jsonl",
+      "evaluation": {
+        "benchmark_name": "synthetic_enriched_240",
+        "is_synthetic_data": true,
+        "disclaimer": "All sessions in this benchmark are synthetically generated for controlled evaluation methodology analysis and do NOT represent real-world production security effectiveness.",
+        "total_samples": 240,
+        "class_distribution": {
+          "NORMAL": 120,
+          "SUSPICIOUS": 120
+        },
+        "scenario_family_distribution": {
+          "benign_error_recovery_workflow": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_heavy_audit_workflow": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_multitool_research": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_qa_conversational": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_single_tool_error": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "benign_single_tool_lookup": {
+            "NORMAL": 20,
+            "SUSPICIOUS": 0
+          },
+          "suspicious_automated_email_abuse": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          },
+          "suspicious_direct_prompt_injection": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          },
+          "suspicious_excessive_error_storm": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          },
+          "suspicious_multi_file_credential_probe": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          },
+          "suspicious_single_path_traversal": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          },
+          "suspicious_stealth_recon_exfil": {
+            "NORMAL": 0,
+            "SUSPICIOUS": 20
+          }
+        },
+        "indirect_total_events_leakage_analysis": {
+          "mean_security_event_overhead_normal": 2.7333,
+          "mean_security_event_overhead_suspicious": 1.5833,
+          "explanation": "In raw 'total_events', SECURITY_ANALYSIS, SECURITY_DETECTION, and BEHAVIORAL_ANOMALY events are counted in the session length. 'non_security_total_events' strips these detector-generated events so session length reflects only operational user/tool/agent events."
+        },
+        "feature_set_evaluations": {
+          "11_with_detector_leakage": {
+            "features": [
+              "total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "security_detection_count",
+              "prompt_event_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 11,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1_score": 1.0,
+                "macro_f1": 1.0,
+                "confusion_matrix": [
+                  [
+                    24,
+                    0
+                  ],
+                  [
+                    0,
+                    24
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 24
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 24
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_error_recovery_workflow",
+                "benign_heavy_audit_workflow",
+                "benign_multitool_research",
+                "benign_qa_conversational",
+                "benign_single_tool_error",
+                "benign_single_tool_lookup",
+                "suspicious_automated_email_abuse",
+                "suspicious_direct_prompt_injection",
+                "suspicious_excessive_error_storm",
+                "suspicious_multi_file_credential_probe",
+                "suspicious_single_path_traversal",
+                "suspicious_stealth_recon_exfil"
+              ],
+              "shared_family_count": 12,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "mean_accuracy": 1.0,
+                "std_accuracy": 0.0,
+                "mean_precision": 1.0,
+                "mean_recall": 1.0,
+                "mean_f1": 1.0,
+                "mean_macro_f1": 1.0,
+                "pooled_oof_metrics": {
+                  "accuracy": 1.0,
+                  "precision": 1.0,
+                  "recall": 1.0,
+                  "f1_score": 1.0,
+                  "macro_f1": 1.0,
+                  "confusion_matrix": [
+                    [
+                      120,
+                      0
+                    ],
+                    [
+                      0,
+                      120
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "support": 120
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_heavy_audit_workflow",
+                  "benign_multitool_research",
+                  "benign_qa_conversational",
+                  "benign_single_tool_error",
+                  "benign_single_tool_lookup",
+                  "suspicious_automated_email_abuse",
+                  "suspicious_direct_prompt_injection",
+                  "suspicious_excessive_error_storm",
+                  "suspicious_stealth_recon_exfil"
+                ],
+                "test_groups": [
+                  "benign_error_recovery_workflow",
+                  "suspicious_multi_file_credential_probe",
+                  "suspicious_single_path_traversal"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 1.0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1_score": 1.0,
+                "macro_f1": 1.0,
+                "confusion_matrix": [
+                  [
+                    20,
+                    0
+                  ],
+                  [
+                    0,
+                    40
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 20,
+                  "SUSPICIOUS": 40
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 20
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1_score": 1.0,
+                    "support": 40
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": true,
+                "actual_splits_used": 5,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 6,
+                "coverage_note": "All 5 grouped folds contain both NORMAL and SUSPICIOUS classes with 0 group overlap.",
+                "fold_accuracies": [
+                  0.6667,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "mean_accuracy": 0.9333,
+                "std_accuracy": 0.1333,
+                "mean_precision": 0.8,
+                "mean_recall": 0.8,
+                "mean_f1": 0.8,
+                "mean_macro_f1": 0.88,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.9167,
+                  "precision": 1.0,
+                  "recall": 0.8333,
+                  "f1_score": 0.9091,
+                  "macro_f1": 0.9161,
+                  "confusion_matrix": [
+                    [
+                      120,
+                      0
+                    ],
+                    [
+                      20,
+                      100
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.8571,
+                      "recall": 1.0,
+                      "f1_score": 0.9231,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 1.0,
+                      "recall": 0.8333,
+                      "f1_score": 0.9091,
+                      "support": 120
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.6667,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.4,
+                      "confusion_matrix": [
+                        [
+                          40,
+                          0
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 40,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.6667,
+                          "recall": 1.0,
+                          "f1_score": 0.8,
+                          "support": 40
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_heavy_audit_workflow",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_multi_file_credential_probe"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          40
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 40
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 40
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "val_groups": [
+                      "benign_error_recovery_workflow",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 4,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_error",
+                      "suspicious_excessive_error_storm"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 5,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "security_detection_count",
+                  "importance": 0.4783
+                },
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.21
+                },
+                {
+                  "feature": "total_events",
+                  "importance": 0.1018
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.0623
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.0561
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.038
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0195
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0139
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.0105
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0096
+                },
+                {
+                  "feature": "prompt_event_count",
+                  "importance": 0.0
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.0667,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.12
+            }
+          },
+          "9_raw_total_events_indirect_leakage": {
+            "features": [
+              "total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 9,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 0.9375,
+                "precision": 0.9565,
+                "recall": 0.9167,
+                "f1_score": 0.9362,
+                "macro_f1": 0.9375,
+                "confusion_matrix": [
+                  [
+                    23,
+                    1
+                  ],
+                  [
+                    2,
+                    22
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 24
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.92,
+                    "recall": 0.9583,
+                    "f1_score": 0.9388,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.9565,
+                    "recall": 0.9167,
+                    "f1_score": 0.9362,
+                    "support": 24
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_error_recovery_workflow",
+                "benign_heavy_audit_workflow",
+                "benign_multitool_research",
+                "benign_qa_conversational",
+                "benign_single_tool_error",
+                "benign_single_tool_lookup",
+                "suspicious_automated_email_abuse",
+                "suspicious_direct_prompt_injection",
+                "suspicious_excessive_error_storm",
+                "suspicious_multi_file_credential_probe",
+                "suspicious_single_path_traversal",
+                "suspicious_stealth_recon_exfil"
+              ],
+              "shared_family_count": 12,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  0.9375,
+                  0.9583,
+                  0.9167,
+                  1.0,
+                  0.9583
+                ],
+                "mean_accuracy": 0.9542,
+                "std_accuracy": 0.0276,
+                "mean_precision": 0.945,
+                "mean_recall": 0.9667,
+                "mean_f1": 0.9545,
+                "mean_macro_f1": 0.9541,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.9542,
+                  "precision": 0.9431,
+                  "recall": 0.9667,
+                  "f1_score": 0.9547,
+                  "macro_f1": 0.9542,
+                  "confusion_matrix": [
+                    [
+                      113,
+                      7
+                    ],
+                    [
+                      4,
+                      116
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.9658,
+                      "recall": 0.9417,
+                      "f1_score": 0.9536,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.9431,
+                      "recall": 0.9667,
+                      "f1_score": 0.9547,
+                      "support": 120
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_heavy_audit_workflow",
+                  "benign_multitool_research",
+                  "benign_qa_conversational",
+                  "benign_single_tool_error",
+                  "benign_single_tool_lookup",
+                  "suspicious_automated_email_abuse",
+                  "suspicious_direct_prompt_injection",
+                  "suspicious_excessive_error_storm",
+                  "suspicious_stealth_recon_exfil"
+                ],
+                "test_groups": [
+                  "benign_error_recovery_workflow",
+                  "suspicious_multi_file_credential_probe",
+                  "suspicious_single_path_traversal"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.6667,
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1_score": 0.6667,
+                "macro_f1": 0.6667,
+                "confusion_matrix": [
+                  [
+                    20,
+                    0
+                  ],
+                  [
+                    20,
+                    20
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 20,
+                  "SUSPICIOUS": 40
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.5,
+                    "recall": 1.0,
+                    "f1_score": 0.6667,
+                    "support": 20
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 0.5,
+                    "f1_score": 0.6667,
+                    "support": 40
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": true,
+                "actual_splits_used": 5,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 6,
+                "coverage_note": "All 5 grouped folds contain both NORMAL and SUSPICIOUS classes with 0 group overlap.",
+                "fold_accuracies": [
+                  0.3333,
+                  1.0,
+                  1.0,
+                  0.5,
+                  0.425
+                ],
+                "mean_accuracy": 0.6517,
+                "std_accuracy": 0.2893,
+                "mean_precision": 0.5,
+                "mean_recall": 0.6,
+                "mean_f1": 0.5333,
+                "mean_macro_f1": 0.5763,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.6542,
+                  "precision": 0.6504,
+                  "recall": 0.6667,
+                  "f1_score": 0.6584,
+                  "macro_f1": 0.6541,
+                  "confusion_matrix": [
+                    [
+                      77,
+                      43
+                    ],
+                    [
+                      40,
+                      80
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.6581,
+                      "recall": 0.6417,
+                      "f1_score": 0.6498,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.6504,
+                      "recall": 0.6667,
+                      "f1_score": 0.6584,
+                      "support": 120
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.3333,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.25,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          20
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 40,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.5,
+                          "recall": 0.5,
+                          "f1_score": 0.5,
+                          "support": 40
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_heavy_audit_workflow",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_multi_file_credential_probe"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          40
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 40
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 40
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "val_groups": [
+                      "benign_error_recovery_workflow",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 4,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_error",
+                      "suspicious_excessive_error_storm"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.5,
+                      "precision": 0.5,
+                      "recall": 1.0,
+                      "f1_score": 0.6667,
+                      "macro_f1": 0.3333,
+                      "confusion_matrix": [
+                        [
+                          0,
+                          20
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.5,
+                          "recall": 1.0,
+                          "f1_score": 0.6667,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 5,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.425,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2982,
+                      "confusion_matrix": [
+                        [
+                          17,
+                          3
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4595,
+                          "recall": 0.85,
+                          "f1_score": 0.5965,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3149
+                },
+                {
+                  "feature": "total_events",
+                  "importance": 0.2896
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.1314
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.1296
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0561
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.038
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.016
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0145
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0099
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.3025,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.3778
+            }
+          },
+          "9_deleaked_behavioral": {
+            "features": [
+              "non_security_total_events",
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 9,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 0.8542,
+                "precision": 0.84,
+                "recall": 0.875,
+                "f1_score": 0.8571,
+                "macro_f1": 0.8541,
+                "confusion_matrix": [
+                  [
+                    20,
+                    4
+                  ],
+                  [
+                    3,
+                    21
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 24
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.8696,
+                    "recall": 0.8333,
+                    "f1_score": 0.8511,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.84,
+                    "recall": 0.875,
+                    "f1_score": 0.8571,
+                    "support": 24
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_error_recovery_workflow",
+                "benign_heavy_audit_workflow",
+                "benign_multitool_research",
+                "benign_qa_conversational",
+                "benign_single_tool_error",
+                "benign_single_tool_lookup",
+                "suspicious_automated_email_abuse",
+                "suspicious_direct_prompt_injection",
+                "suspicious_excessive_error_storm",
+                "suspicious_multi_file_credential_probe",
+                "suspicious_single_path_traversal",
+                "suspicious_stealth_recon_exfil"
+              ],
+              "shared_family_count": 12,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  0.875,
+                  0.8542,
+                  0.8333,
+                  0.9583,
+                  0.8542
+                ],
+                "mean_accuracy": 0.875,
+                "std_accuracy": 0.0437,
+                "mean_precision": 0.8685,
+                "mean_recall": 0.8833,
+                "mean_f1": 0.8749,
+                "mean_macro_f1": 0.8749,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.875,
+                  "precision": 0.8689,
+                  "recall": 0.8833,
+                  "f1_score": 0.876,
+                  "macro_f1": 0.875,
+                  "confusion_matrix": [
+                    [
+                      104,
+                      16
+                    ],
+                    [
+                      14,
+                      106
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.8814,
+                      "recall": 0.8667,
+                      "f1_score": 0.8739,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.8689,
+                      "recall": 0.8833,
+                      "f1_score": 0.876,
+                      "support": 120
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_heavy_audit_workflow",
+                  "benign_multitool_research",
+                  "benign_qa_conversational",
+                  "benign_single_tool_error",
+                  "benign_single_tool_lookup",
+                  "suspicious_automated_email_abuse",
+                  "suspicious_direct_prompt_injection",
+                  "suspicious_excessive_error_storm",
+                  "suspicious_stealth_recon_exfil"
+                ],
+                "test_groups": [
+                  "benign_error_recovery_workflow",
+                  "suspicious_multi_file_credential_probe",
+                  "suspicious_single_path_traversal"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.6667,
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1_score": 0.6667,
+                "macro_f1": 0.6667,
+                "confusion_matrix": [
+                  [
+                    20,
+                    0
+                  ],
+                  [
+                    20,
+                    20
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 20,
+                  "SUSPICIOUS": 40
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.5,
+                    "recall": 1.0,
+                    "f1_score": 0.6667,
+                    "support": 20
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 0.5,
+                    "f1_score": 0.6667,
+                    "support": 40
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": true,
+                "actual_splits_used": 5,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 6,
+                "coverage_note": "All 5 grouped folds contain both NORMAL and SUSPICIOUS classes with 0 group overlap.",
+                "fold_accuracies": [
+                  0.3333,
+                  1.0,
+                  1.0,
+                  0.5,
+                  0.425
+                ],
+                "mean_accuracy": 0.6517,
+                "std_accuracy": 0.2893,
+                "mean_precision": 0.5,
+                "mean_recall": 0.6,
+                "mean_f1": 0.5333,
+                "mean_macro_f1": 0.5763,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.6542,
+                  "precision": 0.6504,
+                  "recall": 0.6667,
+                  "f1_score": 0.6584,
+                  "macro_f1": 0.6541,
+                  "confusion_matrix": [
+                    [
+                      77,
+                      43
+                    ],
+                    [
+                      40,
+                      80
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.6581,
+                      "recall": 0.6417,
+                      "f1_score": 0.6498,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.6504,
+                      "recall": 0.6667,
+                      "f1_score": 0.6584,
+                      "support": 120
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.3333,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.25,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          20
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 40,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.5,
+                          "recall": 0.5,
+                          "f1_score": 0.5,
+                          "support": 40
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_heavy_audit_workflow",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_multi_file_credential_probe"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          40
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 40
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 40
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "val_groups": [
+                      "benign_error_recovery_workflow",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 4,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_error",
+                      "suspicious_excessive_error_storm"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.5,
+                      "precision": 0.5,
+                      "recall": 1.0,
+                      "f1_score": 0.6667,
+                      "macro_f1": 0.3333,
+                      "confusion_matrix": [
+                        [
+                          0,
+                          20
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.5,
+                          "recall": 1.0,
+                          "f1_score": 0.6667,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 5,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.425,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2982,
+                      "confusion_matrix": [
+                        [
+                          17,
+                          3
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4595,
+                          "recall": 0.85,
+                          "f1_score": 0.5965,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3129
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.2241
+                },
+                {
+                  "feature": "non_security_total_events",
+                  "importance": 0.1418
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.1159
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.1158
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0496
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0204
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0102
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0094
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.2233,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.2986
+            }
+          },
+          "8_pure_tool_timing": {
+            "features": [
+              "tool_call_count",
+              "tool_result_count",
+              "tool_error_count",
+              "unique_tool_count",
+              "file_read_count",
+              "search_call_count",
+              "email_call_count",
+              "session_duration_seconds"
+            ],
+            "feature_count": 8,
+            "row_level_evaluation": {
+              "holdout_metrics": {
+                "accuracy": 0.8542,
+                "precision": 0.84,
+                "recall": 0.875,
+                "f1_score": 0.8571,
+                "macro_f1": 0.8541,
+                "confusion_matrix": [
+                  [
+                    20,
+                    4
+                  ],
+                  [
+                    3,
+                    21
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 24,
+                  "SUSPICIOUS": 24
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.8696,
+                    "recall": 0.8333,
+                    "f1_score": 0.8511,
+                    "support": 24
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 0.84,
+                    "recall": 0.875,
+                    "f1_score": 0.8571,
+                    "support": 24
+                  }
+                }
+              },
+              "shared_scenario_families_in_holdout": [
+                "benign_error_recovery_workflow",
+                "benign_heavy_audit_workflow",
+                "benign_multitool_research",
+                "benign_qa_conversational",
+                "benign_single_tool_error",
+                "benign_single_tool_lookup",
+                "suspicious_automated_email_abuse",
+                "suspicious_direct_prompt_injection",
+                "suspicious_excessive_error_storm",
+                "suspicious_multi_file_credential_probe",
+                "suspicious_single_path_traversal",
+                "suspicious_stealth_recon_exfil"
+              ],
+              "shared_family_count": 12,
+              "cv_metrics": {
+                "cv_method": "StratifiedKFold",
+                "n_splits": 5,
+                "fold_accuracies": [
+                  0.875,
+                  0.8542,
+                  0.8333,
+                  0.9583,
+                  0.8542
+                ],
+                "mean_accuracy": 0.875,
+                "std_accuracy": 0.0437,
+                "mean_precision": 0.8685,
+                "mean_recall": 0.8833,
+                "mean_f1": 0.8749,
+                "mean_macro_f1": 0.8749,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.875,
+                  "precision": 0.8689,
+                  "recall": 0.8833,
+                  "f1_score": 0.876,
+                  "macro_f1": 0.875,
+                  "confusion_matrix": [
+                    [
+                      104,
+                      16
+                    ],
+                    [
+                      14,
+                      106
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.8814,
+                      "recall": 0.8667,
+                      "f1_score": 0.8739,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.8689,
+                      "recall": 0.8833,
+                      "f1_score": 0.876,
+                      "support": 120
+                    }
+                  }
+                }
+              }
+            },
+            "scenario_family_grouped_evaluation": {
+              "holdout_split_info": {
+                "valid_class_coverage": true,
+                "train_groups": [
+                  "benign_heavy_audit_workflow",
+                  "benign_multitool_research",
+                  "benign_qa_conversational",
+                  "benign_single_tool_error",
+                  "benign_single_tool_lookup",
+                  "suspicious_automated_email_abuse",
+                  "suspicious_direct_prompt_injection",
+                  "suspicious_excessive_error_storm",
+                  "suspicious_stealth_recon_exfil"
+                ],
+                "test_groups": [
+                  "benign_error_recovery_workflow",
+                  "suspicious_multi_file_credential_probe",
+                  "suspicious_single_path_traversal"
+                ],
+                "group_overlap_count": 0
+              },
+              "holdout_metrics": {
+                "accuracy": 0.6667,
+                "precision": 1.0,
+                "recall": 0.5,
+                "f1_score": 0.6667,
+                "macro_f1": 0.6667,
+                "confusion_matrix": [
+                  [
+                    20,
+                    0
+                  ],
+                  [
+                    20,
+                    20
+                  ]
+                ],
+                "class_distribution": {
+                  "NORMAL": 20,
+                  "SUSPICIOUS": 40
+                },
+                "class_wise_metrics": {
+                  "NORMAL": {
+                    "precision": 0.5,
+                    "recall": 1.0,
+                    "f1_score": 0.6667,
+                    "support": 20
+                  },
+                  "SUSPICIOUS": {
+                    "precision": 1.0,
+                    "recall": 0.5,
+                    "f1_score": 0.6667,
+                    "support": 40
+                  }
+                }
+              },
+              "cv_metrics": {
+                "supported": true,
+                "cv_method": "StratifiedGroupKFold",
+                "requested_splits": 5,
+                "requested_splits_valid_coverage": true,
+                "actual_splits_used": 5,
+                "all_folds_have_both_classes": true,
+                "normal_family_count": 6,
+                "suspicious_family_count": 6,
+                "coverage_note": "All 5 grouped folds contain both NORMAL and SUSPICIOUS classes with 0 group overlap.",
+                "fold_accuracies": [
+                  0.3333,
+                  1.0,
+                  1.0,
+                  0.75,
+                  0.425
+                ],
+                "mean_accuracy": 0.7017,
+                "std_accuracy": 0.2802,
+                "mean_precision": 0.5333,
+                "mean_recall": 0.6,
+                "mean_f1": 0.56,
+                "mean_macro_f1": 0.6563,
+                "pooled_oof_metrics": {
+                  "accuracy": 0.6958,
+                  "precision": 0.708,
+                  "recall": 0.6667,
+                  "f1_score": 0.6867,
+                  "macro_f1": 0.6956,
+                  "confusion_matrix": [
+                    [
+                      87,
+                      33
+                    ],
+                    [
+                      40,
+                      80
+                    ]
+                  ],
+                  "class_distribution": {
+                    "NORMAL": 120,
+                    "SUSPICIOUS": 120
+                  },
+                  "class_wise_metrics": {
+                    "NORMAL": {
+                      "precision": 0.685,
+                      "recall": 0.725,
+                      "f1_score": 0.7045,
+                      "support": 120
+                    },
+                    "SUSPICIOUS": {
+                      "precision": 0.708,
+                      "recall": 0.6667,
+                      "f1_score": 0.6867,
+                      "support": 120
+                    }
+                  }
+                },
+                "folds": [
+                  {
+                    "fold": 1,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.3333,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.25,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          20
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 40,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.5,
+                          "recall": 0.5,
+                          "f1_score": 0.5,
+                          "support": 40
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 2,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_heavy_audit_workflow",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_multi_file_credential_probe"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          40
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 40
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 40
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 3,
+                    "train_groups": [
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal"
+                    ],
+                    "val_groups": [
+                      "benign_error_recovery_workflow",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 1.0,
+                      "precision": 1.0,
+                      "recall": 1.0,
+                      "f1_score": 1.0,
+                      "macro_f1": 1.0,
+                      "confusion_matrix": [
+                        [
+                          20,
+                          0
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 1.0,
+                          "recall": 1.0,
+                          "f1_score": 1.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 4,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_lookup",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_direct_prompt_injection",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_error",
+                      "suspicious_excessive_error_storm"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.75,
+                      "precision": 0.6667,
+                      "recall": 1.0,
+                      "f1_score": 0.8,
+                      "macro_f1": 0.7333,
+                      "confusion_matrix": [
+                        [
+                          10,
+                          10
+                        ],
+                        [
+                          0,
+                          20
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 1.0,
+                          "recall": 0.5,
+                          "f1_score": 0.6667,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.6667,
+                          "recall": 1.0,
+                          "f1_score": 0.8,
+                          "support": 20
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "fold": 5,
+                    "train_groups": [
+                      "benign_error_recovery_workflow",
+                      "benign_heavy_audit_workflow",
+                      "benign_multitool_research",
+                      "benign_qa_conversational",
+                      "benign_single_tool_error",
+                      "suspicious_automated_email_abuse",
+                      "suspicious_excessive_error_storm",
+                      "suspicious_multi_file_credential_probe",
+                      "suspicious_single_path_traversal",
+                      "suspicious_stealth_recon_exfil"
+                    ],
+                    "val_groups": [
+                      "benign_single_tool_lookup",
+                      "suspicious_direct_prompt_injection"
+                    ],
+                    "group_overlap_count": 0,
+                    "both_classes_present": true,
+                    "metrics": {
+                      "accuracy": 0.425,
+                      "precision": 0.0,
+                      "recall": 0.0,
+                      "f1_score": 0.0,
+                      "macro_f1": 0.2982,
+                      "confusion_matrix": [
+                        [
+                          17,
+                          3
+                        ],
+                        [
+                          20,
+                          0
+                        ]
+                      ],
+                      "class_distribution": {
+                        "NORMAL": 20,
+                        "SUSPICIOUS": 20
+                      },
+                      "class_wise_metrics": {
+                        "NORMAL": {
+                          "precision": 0.4595,
+                          "recall": 0.85,
+                          "f1_score": 0.5965,
+                          "support": 20
+                        },
+                        "SUSPICIOUS": {
+                          "precision": 0.0,
+                          "recall": 0.0,
+                          "f1_score": 0.0,
+                          "support": 20
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "feature_importances": [
+                {
+                  "feature": "tool_error_count",
+                  "importance": 0.3231
+                },
+                {
+                  "feature": "session_duration_seconds",
+                  "importance": 0.2396
+                },
+                {
+                  "feature": "tool_call_count",
+                  "importance": 0.1478
+                },
+                {
+                  "feature": "tool_result_count",
+                  "importance": 0.1249
+                },
+                {
+                  "feature": "unique_tool_count",
+                  "importance": 0.0632
+                },
+                {
+                  "feature": "search_call_count",
+                  "importance": 0.0416
+                },
+                {
+                  "feature": "file_read_count",
+                  "importance": 0.0319
+                },
+                {
+                  "feature": "email_call_count",
+                  "importance": 0.0279
+                }
+              ]
+            },
+            "row_vs_grouped_delta": {
+              "cv_mean_accuracy_diff_grouped_minus_row": -0.1733,
+              "cv_mean_macro_f1_diff_grouped_minus_row": -0.2186
+            }
+          }
+        }
+      }
+    }
+  }
+}
