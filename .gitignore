@@ -10,3 +10,26 @@ dist/
 build/
 
 logs/
+
+# Frontend excluded from this repository
+/frontend/
+
+# Local OS files
+.DS_Store
+
+# Python environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+
+# Node dependencies and builds
+node_modules/
+.next/
+dist/
+build/
+
+# Secrets
+.env
+.env.*
+!.env.example
+backup_before_eval_fix/
